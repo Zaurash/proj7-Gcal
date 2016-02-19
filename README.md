@@ -1,10 +1,4 @@
 # proj6-Gcal
-Snarf appointment data from a selection of a user's Google calendars 
-
-## What is here
-
-I've provided code for the authorization (oauth2) protocol for Google
-calendars.  There is also a picker for a date range. 
 
 ## What you'll add
 
@@ -42,3 +36,34 @@ for testing.
 
 
 
+# proj6-mongo
+
+## IX Path
+
+Files may be found ix at /home/users/zgj/CIS399/Project6/proj6-mongo
+
+
+## IX Port Used
+
+http://ix.cs.uoregon.edu:6837
+
+
+## Authors 
+
+Initial version by M Young; revised by Zachary Jones 
+
+
+## Files Changed
+
+flask_main.py
+index.html
+create.html
+
+## Files added
+
+edit.html
+
+
+## File to run
+
+flask_main.py

@@ -42,6 +42,21 @@ def index():
   app.logger.debug("Entering index")
   if 'begin_date' not in flask.session:
     init_session_values()
+    
+  ## We'll need authorization to list calendars 
+  ## I wanted to put what follows into a function, but had
+  ## to pull it back here because the redirect has to be a
+  ## 'return' 
+  app.logger.debug("Checking credentials for Google calendar access")
+  credentials = valid_credentials()
+  if not credentials:
+    app.logger.debug("Redirecting to authorization")
+    return flask.redirect(flask.url_for('oauth2callback'))
+
+  gcal_service = get_gcal_service(credentials)
+  app.logger.debug("Returned from get_gcal_service")
+  flask.session['calendars'] = list_calendars(gcal_service)
+  return render_template('index.html')
   return render_template('index.html')
 
 @app.route("/choose")

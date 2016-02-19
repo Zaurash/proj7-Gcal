@@ -12,3 +12,35 @@ body {
     background-color: "#ccffcc";
 }
 
+.lyrics {
+    margin-left:3em;
+    font-style:italic;
+}
+
+.attribution  {
+    font-size:smaller;
+}
+
+.row{
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.memo {
+   border-width: 2px;
+   border-top: 2px black solid;
+}
+
+#button {
+    width:100px;
+	height:30px;
+	font-size:15px;
+    border:1px solid blue;
+}
+
+#update {
+    width:150px;
+	height:30px;
+	font-size:15px;
+    border:1px solid blue;
+}

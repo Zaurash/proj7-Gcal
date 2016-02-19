@@ -26,6 +26,22 @@
 <script type="text/javascript" 
    src="/static/js/busy.min.js">
 </script>
+	 
+<!-- Date Range Picker Dependencies -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+<!-- Time Range Picker Dependencies -->
+<script type="text/javascript" 
+   src="//cdn.jsdelivr.net/bootstrap.timepicker/0.2.6/js/bootstrap-timepicker.js">
+</script>
+<script type="text/javascript" 
+   src="//cdn.jsdelivr.net/bootstrap.timepicker/0.2.6/js/bootstrap-timepicker.min.js">
+</script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.timepicker/0.2.6/css/bootstrap-timepicker.min.css" />
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.timepicker/0.2.6/css/bootstrap-timepicker.css" />
+
 
 </head>
 
@@ -52,13 +68,14 @@
 
 <h2>Date range</h2>
   <form action="/setrange" method="post">
+  <div class="col-lg-2">
   <input type="text" name="daterange" size="12"
     {% if session.daterange is defined %}
          value="{{session.daterange}}"
     {% endif %}
      class="pull-down"
      style="background: #fff; cursor: pointer; padding: 5px 10px;
-     border: 1px solid #ccc; width: 12em" >
+     border: 1px solid #ccc; width: 13em" >
   <script type="text/javascript">
   $(function() {
   $('input[name="daterange"]').daterangepicker(
@@ -75,8 +92,32 @@
        );
     });
   </script>
+	
 
-<br /><input type="submit" value="Choose" />
+  <h4>Start time</h4>
+        <div class="input-group bootstrap-timepicker timepicker">
+            <input id="timepicker1" type="text" class="form-control input-small">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+        </div>
+ 
+        <script type="text/javascript">
+            $('#timepicker1').timepicker();
+        </script>
+  <h4 style="margin-top: 1em;">End time</h4>
+<div class="input-group bootstrap-timepicker timepicker">
+    <input id="timepicker2" type="text" class="form-control input-small">
+    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+</div>
+
+<script type="text/javascript">
+    $('#timepicker2').timepicker();
+</script>
+  </script>
+	 
+<div> </div>
+
+<br /><input type="submit" id="button" value="Find Times" />
+</div>
 </form>
 
     <!--
@@ -85,19 +126,23 @@
     shown in each row (but the order is across then down; I would
     prefer down then across). 
     -->
+
 {% if session.calendars is defined  %}
-  <div class="row">
+  <div class="col-lg-5">
   {% for cal in session.calendars if cal.selected %}
-          <div class="col-md-4">
+          <div class="row-md-4">
 	   {{ cal.summary }}
+	   <!-- <form action="demo_form.asp"> -->
+	     <input type="checkbox" name="calendar" value="Checkbox" checked> <br>
+	   <!-- </form> -->
           </div>
-         {% if loop.index is divisibleby 3 %}
+         <!-- {% if loop.index is divisibleby 3 %}
           </div> <div class="row">
-         {% endif %}
+         {% endif %} -->
   {% endfor %}
+  <br /><input type="submit" id="update" value="Update Calendars" />
   </div>
-{% endif %}
-    
+{% endif %} 
 
   </div>  <!-- container (for bootstrap) -->
   </body> </html>
