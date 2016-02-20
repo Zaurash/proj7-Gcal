@@ -57,7 +57,6 @@ def index():
   app.logger.debug("Returned from get_gcal_service")
   flask.session['calendars'] = list_calendars(gcal_service)
   return render_template('index.html')
-  return render_template('index.html')
 
 @app.route("/choose")
 def choose():
@@ -73,7 +72,12 @@ def choose():
 
     gcal_service = get_gcal_service(credentials)
     app.logger.debug("Returned from get_gcal_service")
-    flask.session['calendars'] = list_calendars(gcal_service)
+    calendarIDs = []
+    # for cal in flask.session['calendars']:
+    #     for calID in request.form:
+    #         if cal.id == calID:
+    #             # app.logger.debug("here")
+    #             # calendarIDs.append(calID)
     return render_template('index.html')
 
 ####
