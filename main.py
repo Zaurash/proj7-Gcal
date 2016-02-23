@@ -11,6 +11,7 @@ import logging
 import arrow # Replacement for datetime, based on moment.js
 import datetime # But we still need time
 from dateutil import tz  # For interpreting local times
+import datetime
 
 
 # OAuth2  - Google library implementation for convenience
@@ -52,10 +53,10 @@ def index():
   if not credentials:
     app.logger.debug("Redirecting to authorization")
     return flask.redirect(flask.url_for('oauth2callback'))
+    # gcal_service = get_gcal_service(credentials)
+    # app.logger.debug("Returned from get_gcal_service")
+    # flask.session['calendars'] = list_calendars(gcal_service)
 
-  gcal_service = get_gcal_service(credentials)
-  app.logger.debug("Returned from get_gcal_service")
-  flask.session['calendars'] = list_calendars(gcal_service)
   return render_template('index.html')
 
 @app.route("/choose")
@@ -72,12 +73,13 @@ def choose():
 
     gcal_service = get_gcal_service(credentials)
     app.logger.debug("Returned from get_gcal_service")
-    calendarIDs = []
-    # for cal in flask.session['calendars']:
-    #     for calID in request.form:
-    #         if cal.id == calID:
-    #             # app.logger.debug("here")
-    #             # calendarIDs.append(calID)
+    flask.session['calendars'] = list_calendars(gcal_service)       #
+    # start = datetime.datetime.strptime(flask.session["begin_date"] + flask.session["begin_time"], "%m/%d/%Y %H:%M %p")
+    # end = datetime.datetime.strptime(flask.session["end_date"] + flask.session["end_time"], "%m/%d/%Y %H:%M %p")
+    for cal in list_calendars(gcal_service):
+        events = gcal_service.events().list(calendarId=cal["id"]).execute()
+        for event in events['items']:
+            print(event.get('summary'))
     return render_template('index.html')
 
 ####
@@ -203,13 +205,14 @@ def setrange():
     widget.
     """
     app.logger.debug("Entering setrange")  
-    flask.flash("Setrange gave us '{}'".format(
-      request.form.get('daterange')))
+    flask.flash("Setrange gave us '{}'".format(request.form.get('daterange')) + " " + request.form.get("timepicker1") + " - " + request.form.get("timepicker2"))
     daterange = request.form.get('daterange')
     flask.session['daterange'] = daterange
     daterange_parts = daterange.split()
-    flask.session['begin_date'] = interpret_date(daterange_parts[0])
-    flask.session['end_date'] = interpret_date(daterange_parts[2])
+    flask.session['begin_date'] = daterange_parts[0]
+    flask.session['end_date'] = daterange_parts[2]
+    flask.session['begin_time'] = request.form.get('timepicker1')
+    flask.session['end_time'] = request.form.get('timepicker2')
     app.logger.debug("Setrange parsed {} - {}  dates as {} - {}".format(
       daterange_parts[0], daterange_parts[1], 
       flask.session['begin_date'], flask.session['end_date']))

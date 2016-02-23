@@ -96,7 +96,10 @@
 
   <h4>Start time</h4>
         <div class="input-group bootstrap-timepicker timepicker">
-            <input id="timepicker1" type="text" class="form-control input-small">
+            <input id="timepicker1" name="timepicker1" type="text" class="form-control input-small"
+		    {% if session.daterange is defined %}
+		         value="{{session.begin_time}}"
+		    {% endif %}>
             <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
         </div>
  
@@ -105,7 +108,10 @@
         </script>
   <h4 style="margin-top: 1em;">End time</h4>
 <div class="input-group bootstrap-timepicker timepicker">
-    <input id="timepicker2" type="text" class="form-control input-small">
+    <input id="timepicker2" name="timepicker2" type="text" class="form-control input-small"
+    {% if session.daterange is defined %}
+         value="{{session.end_time}}"
+    {% endif %}>
     <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
 </div>
 
@@ -133,7 +139,7 @@
           <div class="row-md-4">
 	   {{ cal.summary }}
 	   <!-- <form action="demo_form.asp"> -->
-	     <input type="checkbox" name = {{ cal.summary }}  value = {{ cal.id }} checked> <br>
+	     <input type="checkbox" name ="{{ cal.summary }}" checked> <br>
 	   <!-- </form> -->
           </div>
          <!-- {% if loop.index is divisibleby 3 %}
