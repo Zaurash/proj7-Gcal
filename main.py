@@ -11,7 +11,6 @@ import logging
 import arrow # Replacement for datetime, based on moment.js
 import datetime # But we still need time
 from dateutil import tz  # For interpreting local times
-import datetime
 
 
 # OAuth2  - Google library implementation for convenience
@@ -43,19 +42,17 @@ def index():
   app.logger.debug("Entering index")
   if 'begin_date' not in flask.session:
     init_session_values()
-    
-  ## We'll need authorization to list calendars 
-  ## I wanted to put what follows into a function, but had
-  ## to pull it back here because the redirect has to be a
-  ## 'return' 
+  
   app.logger.debug("Checking credentials for Google calendar access")
   credentials = valid_credentials()
   if not credentials:
     app.logger.debug("Redirecting to authorization")
     return flask.redirect(flask.url_for('oauth2callback'))
-    # gcal_service = get_gcal_service(credentials)
-    # app.logger.debug("Returned from get_gcal_service")
-    # flask.session['calendars'] = list_calendars(gcal_service)
+
+
+  gcal_service = get_gcal_service(credentials)
+  app.logger.debug("Returned from get_gcal_service")
+  flask.session['calendars'] = list_calendars(gcal_service)
 
   return render_template('index.html')
 
@@ -73,13 +70,20 @@ def choose():
 
     gcal_service = get_gcal_service(credentials)
     app.logger.debug("Returned from get_gcal_service")
-    flask.session['calendars'] = list_calendars(gcal_service)       #
-    # start = datetime.datetime.strptime(flask.session["begin_date"] + flask.session["begin_time"], "%m/%d/%Y %H:%M %p")
-    # end = datetime.datetime.strptime(flask.session["end_date"] + flask.session["end_time"], "%m/%d/%Y %H:%M %p")
+
     for cal in list_calendars(gcal_service):
         events = gcal_service.events().list(calendarId=cal["id"]).execute()
+        print("Events in calendar: ")
         for event in events['items']:
-            print(event.get('summary'))
+            # print(event["summary"])
+            if ("transparency" in event) and event["transparency"] == "transparent":
+                continue
+            if "dateTime" in event["start"]:
+                # print("  --->   Checking event: " + event["summary"])
+                eventStart = arrow.get(event["start"]["dateTime"])
+                eventEnd = arrow.get(event["end"]["dateTime"])
+                if eventStart.time() >= arrow.get(flask.session["begin_time"], "h:mm A").time() and eventEnd.time() <= arrow.get(flask.session["end_time"], "h:mm A").time():
+                    print("  --->     --->   In time range: " + event["summary"])
     return render_template('index.html')
 
 ####
@@ -205,18 +209,23 @@ def setrange():
     widget.
     """
     app.logger.debug("Entering setrange")  
-    flask.flash("Setrange gave us '{}'".format(request.form.get('daterange')) + " " + request.form.get("timepicker1") + " - " + request.form.get("timepicker2"))
+    flask.flash("Setrange gave us '{}'".format(request.form.get('daterange')) + ", " + request.form.get('begin_time') + " - " + request.form.get('end_time'))
     daterange = request.form.get('daterange')
+    
     flask.session['daterange'] = daterange
+
     daterange_parts = daterange.split()
-    flask.session['begin_date'] = daterange_parts[0]
-    flask.session['end_date'] = daterange_parts[2]
-    flask.session['begin_time'] = request.form.get('timepicker1')
-    flask.session['end_time'] = request.form.get('timepicker2')
+    flask.session['begin_date'] = interpret_date(daterange_parts[0])
+    flask.session['end_date'] = interpret_date(daterange_parts[2])
+    flask.session['begin_time'] = request.form.get('begin_time')
+    flask.session['end_time'] = request.form.get('end_time')
+    
     app.logger.debug("Setrange parsed {} - {}  dates as {} - {}".format(
       daterange_parts[0], daterange_parts[1], 
       flask.session['begin_date'], flask.session['end_date']))
     return flask.redirect(flask.url_for("choose"))
+    
+        
 
 ####
 #

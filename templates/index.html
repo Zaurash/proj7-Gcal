@@ -96,7 +96,7 @@
 
   <h4>Start time</h4>
         <div class="input-group bootstrap-timepicker timepicker">
-            <input id="timepicker1" name="timepicker1" type="text" class="form-control input-small"
+            <input id="timepicker1" name="begin_time" type="text" class="form-control input-small"
 		    {% if session.daterange is defined %}
 		         value="{{session.begin_time}}"
 		    {% endif %}>
@@ -108,7 +108,7 @@
         </script>
   <h4 style="margin-top: 1em;">End time</h4>
 <div class="input-group bootstrap-timepicker timepicker">
-    <input id="timepicker2" name="timepicker2" type="text" class="form-control input-small"
+    <input id="timepicker2" name="end_time" type="text" class="form-control input-small"
     {% if session.daterange is defined %}
          value="{{session.end_time}}"
     {% endif %}>
@@ -126,29 +126,21 @@
 </div>
 </form>
 
-    <!--
-    Show the calendar list (if we have it).  This will need to be turned into
-    a form from which calendars can be picked. Up to three entries are
-    shown in each row (but the order is across then down; I would
-    prefer down then across). 
-    -->
-
 {% if session.calendars is defined  %}
   <div class="col-lg-5">
   {% for cal in session.calendars if cal.selected %}
           <div class="row-md-4">
 	   {{ cal.summary }}
-	   <!-- <form action="demo_form.asp"> -->
-	     <input type="checkbox" name ="{{ cal.summary }}" checked> <br>
-	   <!-- </form> -->
+	     <input id="{{cal.id}}" name="{{cal.summary}}" type="checkbox" value="{{cal}}" checked>
           </div>
          <!-- {% if loop.index is divisibleby 3 %}
           </div> <div class="row">
          {% endif %} -->
   {% endfor %}
-  <br /><input type="submit" id="update" value="Update Calendars" />
-  </div>
+</div>
 {% endif %} 
 
-  </div>  <!-- container (for bootstrap) -->
+
+    </div>  <!-- container (for bootstrap) -->
+  
   </body> </html>
